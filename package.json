@@ -21,7 +21,7 @@
         "lab" : "3.x.x"
     },
     "scripts" : {
-        "test" : "make test.cov"
+        "test" : "make test-cov"
     },
     "licenses" : [{
             "type" : "MIT",
