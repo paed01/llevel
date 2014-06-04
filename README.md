@@ -1,6 +1,8 @@
 llevel
 ===========
 
+[![Build Status](https://secure.travis-ci.org/paed01/llevel.png)](http://travis-ci.org/paed01/llevel)
+
 Log level handling, and thats it.
 
 Install **llevel**:
