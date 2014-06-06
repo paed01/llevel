@@ -26,7 +26,7 @@ Loglevels in ascending importance:
 
 ## Examples
 
-### Make as decision to log
+### Make a decision to log
 
 ```javascript
 
@@ -50,7 +50,7 @@ llevel.important('trace', function(err, important) {
 
 ### Decision from array
 
-Decision to log can be decided from an array of strings.
+Make decision to log from an array of strings.
 
 ```javascript
 
@@ -87,4 +87,4 @@ Is the level important enough?
 - `callback` - Callback function using the signature `function(err, important, level)` where:
   - `err` - decision failed, the error reason, otherwise `null`.
   - `important` - `boolean`, `true` if `level` is equally or more important than minimum level, otherwise `false`. If `level` is an array the most important level is compared to minimum level
-  - `level` - the most important level. Especially interresting if `level` is an array 
+  - `level` - the most important level from argument `level`. Especially interresting if `level` is an array 

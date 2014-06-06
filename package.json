@@ -1,7 +1,7 @@
 {
     "name" : "llevel",
     "description" : "Log level handling",
-    "version" : "0.1.0",
+    "version" : "0.1.1",
     "author" : "Pål Edman <pal.edman@outlook.com>",
     "contributors" : [],
     "repository" : "git://github.com/paed01/llevel",
@@ -21,7 +21,8 @@
         "lab" : "3.x.x"
     },
     "scripts" : {
-        "test" : "make test-cov"
+        "test" : "make test-cov",
+        "test-win" : "node node_modules/lab/bin/lab -c"
     },
     "licenses" : [{
             "type" : "MIT",
