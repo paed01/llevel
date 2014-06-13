@@ -12,7 +12,7 @@ npm install llevel
 
 # Introduction
 
-The *llevel* module handles the importance of log levels. It is can be used to decide if a record should be logged or not.
+The *llevel* module handles the importance of log levels. It can be used to decide if a record should be logged or not.
 
 Loglevels in ascending importance:
 
