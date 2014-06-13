@@ -15,7 +15,7 @@ describe('llevel', function () {
 
         it('throws if not instantiated with new', function (done) {
             var fn = function () {
-                var ll = Loglevel();
+                Loglevel();
             };
             expect(fn).to.throw(Error);
             done();
@@ -35,6 +35,69 @@ describe('llevel', function () {
 
         it('with level not in levels returns lowest level', function (done) {
             var ll = new Loglevel('ysnp');
+            expect(ll.level).to.eql('trace');
+            done();
+        });
+
+        it('support custom levels', function (done) {
+            var levels = {
+                ysnp : 0
+            };
+            var ll = new Loglevel('ysnp', levels);
+            expect(ll.level).to.eql('ysnp');
+            done();
+        });
+
+        it('ignores custom levels that is not an object', function (done) {
+            var levels = [];
+            var ll = new Loglevel('ysnp', levels);
+            expect(ll.level).to.eql('trace');
+            done();
+        });
+
+        it('ignores custom level that is not finite', function (done) {
+            var levels = {
+                none : -1,
+                warning : 0,
+                string : 'me'
+            };
+            var ll = new Loglevel('warning', levels);
+            expect(ll.levels).to.eql({
+                none : -1,
+                warning : 0
+            });
+            done();
+        });
+
+        it('with custom levels resolves the lowest level >0 as default', function (done) {
+            var levels = {
+                none : -1,
+                warning : 0,
+                important : 10000
+            };
+            var ll = new Loglevel(null, levels);
+            expect(ll.level).to.eql('warning');
+            done();
+        });
+
+        it('takes custom levels as first argument', function (done) {
+            var levels = {
+                none : -1,
+                warning : 0
+            };
+            var ll = new Loglevel(levels);
+            expect(ll.level).to.eql('warning');
+            done();
+        });
+
+        it('ignores null as custom levels', function (done) {
+            var ll = new Loglevel(null, null);
+            expect(ll.level).to.eql('trace');
+            done();
+        });
+
+        it('ignores function as custom levels', function (done) {
+            var ll = new Loglevel(null, function() {});
             expect(ll.level).to.eql('trace');
             done();
         });
@@ -143,7 +206,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('error');
             var fn = function () {
                 loglevel.important('trace');
-            }
+            };
             expect(fn).to.not.throw(Error);
             done();
         });
@@ -152,7 +215,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('error');
             var fn = function () {
                 loglevel.important(function () {});
-            }
+            };
             expect(fn).to.not.throw(Error);
             done();
         });
@@ -240,7 +303,7 @@ describe('llevel', function () {
             });
         });
 
-        it('ignores custom minumum level if not found', function (done) {
+        it('ignores custom minimum level if not found', function (done) {
             var loglevel = new Loglevel('debug');
             loglevel.important(['fatal', 'info', 'trace'], 'ysnp', function (err, logthis, toplevel) {
                 expect(err).to.not.exist;
@@ -256,6 +319,55 @@ describe('llevel', function () {
                 expect(err).to.not.exist;
                 expect(logthis).to.eql(false);
                 expect(toplevel).to.eql('info');
+                done();
+            });
+        });
+        
+        it('with custom levels returns highest level in callback as toplevel', function (done) {
+            var levels = {
+                no : -2,
+                none : -1,
+                a : 1,
+                b : 2,
+                c : 3
+            };
+            var loglevel = new Loglevel('b', levels);
+            loglevel.important(['fatal', 'info', 'b'], function (err, logthis, toplevel) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(true);
+                expect(toplevel).to.eql('b');
+                done();
+            });
+        });
+
+        it('with custom levels returns in false callback if default level is less than 0', function (done) {
+            var levels = {
+                no : -2,
+                none : -1,
+                a : 1,
+                b : 2,
+                c : 3
+            };
+            var loglevel = new Loglevel('no', levels);
+            loglevel.important('c', function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(false);
+                done();
+            });
+        });
+        
+        it('with custom levels returns in false in callback if casing is wrong', function (done) {
+            var levels = {
+                no : -2,
+                none : -1,
+                a : 1,
+                b : 2,
+                C : 3
+            };
+            var loglevel = new Loglevel('a', levels);
+            loglevel.important('c', function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(false);
                 done();
             });
         });
@@ -294,7 +406,7 @@ describe('llevel', function () {
             expect(loglevel.getMinimumLevel(function () {})).to.eql('trace');
             done();
         });
-        
+
         it('ignores level that is not finite', function (done) {
             var loglevel = new Loglevel('warn');
             expect(loglevel.getMinimumLevel({
