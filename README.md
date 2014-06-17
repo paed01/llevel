@@ -14,7 +14,9 @@ npm install llevel
 
 The *llevel* module handles the importance of log levels. It can be used to decide if a record should be logged or not.
 
-Loglevels in ascending importance:
+## Log levels
+
+Default levels in ascending importance:
 
 * `trace`
 * `debug`
@@ -42,7 +44,7 @@ llevel.important('warn', function(err, important) {
 
 llevel.important('trace', function(err, important) {
     if (important) {
-        console.log('trace', 'is less important than', llevel.level, 'so this should never happen');
+        console.log('trace', 'is less important than', llevel.level, 'so this is ignored');
     }
 });
 
@@ -108,15 +110,92 @@ llevel.important('deadly', function (err, important, level) {
 
 ```
 
-
 ## Usage
 
 ### `new Llevel([minLevel], [customLevels])`
 
 - `minLevel` - optional argument to be used as minimum level, defaults to `trace`
 - `customLevels` - optional argument to be used as levels, must be an object where: 
-  - `key` - level name
-  - `value` - `number`, level importance, is tested with `isFinite`. Value below 0 is considered `off`
+  - `key` - level name. The key is made lowercase
+  - `value` - `number`, level importance, is tested with `isFinite`. Negative numbers are considered `off`
+
+```javascript
+var llevel = new Llevel();
+// llevel.level -> trace
+```
+  
+When setting `minLevel` the argument is compared with levels. If the minimum level is not found the lowest positive level is used.
+
+```javascript
+var llevel = new Llevel('trace');
+// llevel.level -> trace
+
+var llevel = new Llevel('info', {
+    none : -2,
+    trace : 0,
+    information : 1
+});
+// llevel.level -> trace
+```
+
+When setting `customLevels` the object is cloned.
+
+```javascript
+var levels = {
+    none : -2,
+    trace : 0,
+    information : 1
+};
+var llevel = new Llevel(levels);
+levels.warn = 10;
+
+// llevel.levels -> {none: -2, trace: 0, information: 1}
+```
+
+To ensure that the log level is found among level names (object keys) are lower cased. This also ensures that the levels are unique.
+
+```javascript
+var llevel = new Llevel({
+    none : -2,
+    trace : 0,
+    TRACE : 1,
+    tracE : 2,
+    information : 3
+});
+// llevel.levels -> {none: -2, trace: 2, information: 3}
+```
+
+Object values in `customLevels` that are not numbers are ignored.
+ 
+```javascript
+var llevel = new Llevel({
+    none : -2,
+    trace : 0,
+    information : 1,
+    err : 'fatal'
+});
+// llevel.levels -> {none: -2, trace: 2, information: 1}
+```
+
+If both `minLevel` and `customLevels` are used the `minLevel` should match one of the custom levels. If not, the lowest positive level is used as `minLevel`.
+ 
+```javascript
+var llevel = new Llevel('none', {
+    none : -2,
+    trace : 0,
+    information : 1
+});
+// llevel.level -> none
+// llevel.levels -> {none: -2, trace: 2, information: 1}
+
+var llevel = new Llevel('warn', {
+    none : -2,
+    trace : 0,
+    information : 1
+});
+// llevel.level -> trace
+// llevel.levels -> {none: -2, trace: 2, information: 1}
+```
 
 ### `important(level, [minLevel], callback)`
 

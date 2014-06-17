@@ -97,7 +97,7 @@ describe('llevel', function () {
         });
 
         it('ignores function as custom levels', function (done) {
-            var ll = new Loglevel(null, function() {});
+            var ll = new Loglevel(null, function () {});
             expect(ll.level).to.eql('trace');
             done();
         });
@@ -161,6 +161,16 @@ describe('llevel', function () {
                 })).to.eql(null);
             done();
         });
+
+        it('returns null if argument is an array with null', function (done) {
+            expect(loglevel.levelFromArray([null])).to.eql(null);
+            done();
+        });
+
+        it('returns level if argument is an array that contains null', function (done) {
+            expect(loglevel.levelFromArray(['trace', null])).to.eql('trace');
+            done();
+        });
     });
 
     describe('#compare', function () {
@@ -178,6 +188,11 @@ describe('llevel', function () {
 
         it('returns -1 if level is less than minimum level', function (done) {
             expect(loglevel.compare('debug', 8)).to.eql(-1);
+            done();
+        });
+
+        it('returns -1 if level is null', function (done) {
+            expect(loglevel.compare(null, 0)).to.eql(-1);
             done();
         });
     });
@@ -238,7 +253,7 @@ describe('llevel', function () {
             });
         });
 
-        it('returns true in callback if no minumum level', function (done) {
+        it('returns true in callback if no minumum level in ctor', function (done) {
             var loglevel = new Loglevel();
             loglevel.important('trace', function (err, logthis) {
                 expect(err).to.not.exist;
@@ -322,7 +337,7 @@ describe('llevel', function () {
                 done();
             });
         });
-        
+
         it('with custom levels returns highest level in callback as toplevel', function (done) {
             var levels = {
                 no : -2,
@@ -355,8 +370,8 @@ describe('llevel', function () {
                 done();
             });
         });
-        
-        it('with custom levels returns in false in callback if casing is wrong', function (done) {
+
+        it('with custom levels returns in true in callback even if casing is wrong', function (done) {
             var levels = {
                 no : -2,
                 none : -1,
@@ -366,6 +381,49 @@ describe('llevel', function () {
             };
             var loglevel = new Loglevel('a', levels);
             loglevel.important('c', function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(true);
+                done();
+            });
+        });
+
+        it('with deleted levels property reverts to default levels', function (done) {
+            var loglevel = new Loglevel('warn');
+            delete loglevel.levels;
+
+            loglevel.important('info', function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(false);
+                done();
+            });
+        });
+
+        it('level argument is object returns false', function (done) {
+            var loglevel = new Loglevel('warn');
+            loglevel.important({}, function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(false);
+                done();
+            });
+        });
+
+        it('level argument is array of objects returns false', function (done) {
+            var loglevel = new Loglevel('warn');
+            loglevel.important([{}, {}
+
+                ], function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(false);
+                done();
+            });
+        });
+
+        // Not sure about the expected behavior...
+        it('level argument is array that contains off returns false', {
+            skip : true
+        }, function (done) {
+            var loglevel = new Loglevel('warn');
+            loglevel.important(['fatal', 'off'], function (err, logthis) {
                 expect(err).to.not.exist;
                 expect(logthis).to.eql(false);
                 done();
@@ -418,4 +476,109 @@ describe('llevel', function () {
         });
     });
 
+    describe('#setLevels', function () {
+        it('saves levels in property levels', function (done) {
+            var loglevel = new Loglevel('warn');
+            var levels = {
+                'info' : 0,
+                'trace' : 1,
+            };
+            loglevel.setLevels(levels);
+            expect(loglevel.levels).to.eql(levels);
+            done();
+        });
+
+        it('ignores levels that are not finite', function (done) {
+            var loglevel = new Loglevel('warn');
+            var levels = {
+                'info' : 0,
+                'trace' : 1,
+                'not-finite' : 'bla'
+            };
+            loglevel.setLevels(levels);
+            expect(loglevel.levels).to.eql({
+                'info' : 0,
+                'trace' : 1
+            });
+            done();
+        });
+
+        it('ignores levels argument if null', function (done) {
+            var loglevel = new Loglevel('warn');
+            var oLevels = loglevel.levels;
+            loglevel.setLevels(null);
+            expect(loglevel.levels).to.eql(oLevels);
+            done();
+        });
+
+        it('ignores levels argument if function', function (done) {
+            var loglevel = new Loglevel('warn');
+            var oLevels = loglevel.levels;
+            loglevel.setLevels(function () {});
+            expect(loglevel.levels).to.eql(oLevels);
+            done();
+        });
+
+        it('with empty object returns false when testing importance', function (done) {
+            var loglevel = new Loglevel('warn');
+            loglevel.setLevels({});
+            loglevel.important('fatal', function (err, logthis) {
+                expect(err).to.not.exist;
+                expect(logthis).to.eql(false);
+                done();
+            });
+        });
+
+        it('ignores case of level keys', function (done) {
+            var loglevel = new Loglevel('warn');
+            loglevel.setLevels({
+                none : -2,
+                trace : 0,
+                TRACE : 1,
+                tracE : 2,
+                information : 3
+            });
+            expect(loglevel.levels).to.eql({
+                none : -2,
+                trace : 2,
+                information : 3
+            });
+            done();
+        });
+
+        it('ignores level that is null', function (done) {
+            var loglevel = new Loglevel('warn');
+            loglevel.setLevels({
+                'info' : 0,
+                'trace' : 1,
+                'null' : null
+            });
+            expect(loglevel.levels).to.eql({
+                info : 0,
+                trace : 1
+            });
+            done();
+        });
+
+        // Not sure about the expected behavior...
+        it('sets new minLevel if level not found', {
+            skip : true
+        }, function (done) {
+            var loglevel = new Loglevel('warn');
+            var levels = {
+                'info' : 0,
+                'trace' : 1,
+                'none' : -1
+            };
+            loglevel.setLevels(levels);
+            expect(loglevel.levels).to.eql({
+                'info' : 0,
+                'trace' : 1,
+                'none' : -1
+            });
+            expect(loglevel.level).to.eql('info');
+            done();
+        });
+
+    });
 });
