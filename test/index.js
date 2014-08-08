@@ -1,11 +1,12 @@
 ﻿/*jslint expr:true es5:true */
 var Lab = require('lab');
+var lab = exports.lab = Lab.script();
 
 var expect = Lab.expect;
-var before = Lab.before;
-var after = Lab.after;
-var describe = Lab.experiment;
-var it = Lab.test;
+var before = lab.before;
+var after = lab.after;
+var describe = lab.experiment;
+var it = lab.test;
 
 var Loglevel = require('../index');
 
