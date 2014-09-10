@@ -2,3 +2,10 @@ language: node_js
 
 node_js:
   - 0.10
+
+addons:
+  code_climate:
+    repo_token: ***REMOVED***
+
+after_script:
+  - cat coverage.lcov | codeclimate
