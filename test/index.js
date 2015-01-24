@@ -1,8 +1,9 @@
 ﻿/*jslint expr:true es5:true */
+var Code = require('code');
 var Lab = require('lab');
 var lab = exports.lab = Lab.script();
+var expect = Code.expect;
 
-var expect = Lab.expect;
 var before = lab.before;
 var after = lab.after;
 var describe = lab.experiment;
@@ -24,19 +25,19 @@ describe('llevel', function () {
 
         it('takes level as argument', function (done) {
             var ll = new Loglevel('trace');
-            expect(ll.level).to.eql('trace');
+            expect(ll.level).to.equal('trace');
             done();
         });
 
         it('without argument returns lowest level', function (done) {
             var ll = new Loglevel();
-            expect(ll.level).to.eql('trace');
+            expect(ll.level).to.equal('trace');
             done();
         });
 
         it('with level not in levels returns lowest level', function (done) {
             var ll = new Loglevel('ysnp');
-            expect(ll.level).to.eql('trace');
+            expect(ll.level).to.equal('trace');
             done();
         });
 
@@ -45,14 +46,14 @@ describe('llevel', function () {
                 ysnp : 0
             };
             var ll = new Loglevel('ysnp', levels);
-            expect(ll.level).to.eql('ysnp');
+            expect(ll.level).to.equal('ysnp');
             done();
         });
 
         it('ignores custom levels that is not an object', function (done) {
             var levels = [];
             var ll = new Loglevel('ysnp', levels);
-            expect(ll.level).to.eql('trace');
+            expect(ll.level).to.equal('trace');
             done();
         });
 
@@ -63,7 +64,7 @@ describe('llevel', function () {
                 string : 'me'
             };
             var ll = new Loglevel('warning', levels);
-            expect(ll.levels).to.eql({
+            expect(ll.levels).to.deep.equal({
                 none : -1,
                 warning : 0
             });
@@ -77,7 +78,7 @@ describe('llevel', function () {
                 important : 10000
             };
             var ll = new Loglevel(null, levels);
-            expect(ll.level).to.eql('warning');
+            expect(ll.level).to.equal('warning');
             done();
         });
 
@@ -87,19 +88,19 @@ describe('llevel', function () {
                 warning : 0
             };
             var ll = new Loglevel(levels);
-            expect(ll.level).to.eql('warning');
+            expect(ll.level).to.equal('warning');
             done();
         });
 
         it('ignores null as custom levels', function (done) {
             var ll = new Loglevel(null, null);
-            expect(ll.level).to.eql('trace');
+            expect(ll.level).to.equal('trace');
             done();
         });
 
         it('ignores function as custom levels', function (done) {
             var ll = new Loglevel(null, function () {});
-            expect(ll.level).to.eql('trace');
+            expect(ll.level).to.equal('trace');
             done();
         });
     });
@@ -108,27 +109,27 @@ describe('llevel', function () {
         var loglevel = new Loglevel('trace');
 
         it('resolves level to corresponding int', function (done) {
-            expect(loglevel.resolve('trace')).to.eql(0);
+            expect(loglevel.resolve('trace')).to.equal(0);
             done();
         });
 
         it('resolves level to corresponding int case-insensitive', function (done) {
-            expect(loglevel.resolve('WARN')).to.eql(4);
+            expect(loglevel.resolve('WARN')).to.equal(4);
             done();
         });
 
         it('returns -1 if not a string', function (done) {
-            expect(loglevel.resolve(0)).to.eql(-1);
+            expect(loglevel.resolve(0)).to.equal(-1);
             done();
         });
 
         it('returns -1 if null', function (done) {
-            expect(loglevel.resolve(null)).to.eql(-1);
+            expect(loglevel.resolve(null)).to.equal(-1);
             done();
         });
 
         it('returns -1 if not found', function (done) {
-            expect(loglevel.resolve('ysnp')).to.eql(-1);
+            expect(loglevel.resolve('ysnp')).to.equal(-1);
             done();
         });
     });
@@ -137,39 +138,39 @@ describe('llevel', function () {
         var loglevel = new Loglevel('trace');
 
         it('returns top level from array of levels', function (done) {
-            expect(loglevel.levelFromArray(['trace'])).to.eql('trace');
+            expect(loglevel.levelFromArray(['trace'])).to.equal('trace');
             done();
         });
 
         it('returns null if empty array', function (done) {
-            expect(loglevel.levelFromArray([])).to.eql(null);
+            expect(loglevel.levelFromArray([])).to.equal(null);
             done();
         });
 
         it('returns highest level', function (done) {
-            expect(loglevel.levelFromArray(['fatal', 'trace', 'off'])).to.eql('fatal');
+            expect(loglevel.levelFromArray(['fatal', 'trace', 'off'])).to.equal('fatal');
             done();
         });
 
         it('returns null if argument is null', function (done) {
-            expect(loglevel.levelFromArray(null)).to.eql(null);
+            expect(loglevel.levelFromArray(null)).to.equal(null);
             done();
         });
 
         it('returns null if argument is not an array', function (done) {
             expect(loglevel.levelFromArray({
                     level : 'off'
-                })).to.eql(null);
+                })).to.equal(null);
             done();
         });
 
         it('returns null if argument is an array with null', function (done) {
-            expect(loglevel.levelFromArray([null])).to.eql(null);
+            expect(loglevel.levelFromArray([null])).to.equal(null);
             done();
         });
 
         it('returns level if argument is an array that contains null', function (done) {
-            expect(loglevel.levelFromArray(['trace', null])).to.eql('trace');
+            expect(loglevel.levelFromArray(['trace', null])).to.equal('trace');
             done();
         });
     });
@@ -178,22 +179,22 @@ describe('llevel', function () {
         var loglevel = new Loglevel('trace');
 
         it('returns level int if greater than minimum level', function (done) {
-            expect(loglevel.compare('trace', -1)).to.eql(0);
+            expect(loglevel.compare('trace', -1)).to.equal(0);
             done();
         });
 
         it('returns -1 if level not found', function (done) {
-            expect(loglevel.compare('ysnp', 16)).to.eql(-1);
+            expect(loglevel.compare('ysnp', 16)).to.equal(-1);
             done();
         });
 
         it('returns -1 if level is less than minimum level', function (done) {
-            expect(loglevel.compare('debug', 8)).to.eql(-1);
+            expect(loglevel.compare('debug', 8)).to.equal(-1);
             done();
         });
 
         it('returns -1 if level is null', function (done) {
-            expect(loglevel.compare(null, 0)).to.eql(-1);
+            expect(loglevel.compare(null, 0)).to.equal(-1);
             done();
         });
     });
@@ -204,7 +205,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('error');
             loglevel.important('warn', 'trace', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
+                expect(logthis).to.equal(true);
                 done();
             });
         });
@@ -213,7 +214,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('error');
             loglevel.important('trace', 'warn', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -223,7 +224,7 @@ describe('llevel', function () {
             var fn = function () {
                 loglevel.important('trace');
             };
-            expect(fn).to.not.throw(Error);
+            expect(fn).to.not.throw();
             done();
         });
 
@@ -232,7 +233,7 @@ describe('llevel', function () {
             var fn = function () {
                 loglevel.important(function () {});
             };
-            expect(fn).to.not.throw(Error);
+            expect(fn).to.not.throw();
             done();
         });
 
@@ -240,7 +241,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('error');
             loglevel.important('trace', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -249,7 +250,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('error');
             loglevel.important(null, function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -258,7 +259,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel();
             loglevel.important('trace', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
+                expect(logthis).to.equal(true);
                 done();
             });
         });
@@ -267,7 +268,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('trace');
             loglevel.important('off', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -276,7 +277,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('off');
             loglevel.important('fatal', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -285,7 +286,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('debug');
             loglevel.important(['fatal'], function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
+                expect(logthis).to.equal(true);
                 done();
             });
         });
@@ -294,7 +295,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('debug');
             loglevel.important(['fatal', 'info', 'trace'], function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
+                expect(logthis).to.equal(true);
                 done();
             });
         });
@@ -303,8 +304,8 @@ describe('llevel', function () {
             var loglevel = new Loglevel('debug');
             loglevel.important(['fatal', 'info', 'trace'], function (err, logthis, toplevel) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
-                expect(toplevel).to.eql('fatal');
+                expect(logthis).to.equal(true);
+                expect(toplevel).to.equal('fatal');
                 done();
             });
         });
@@ -313,8 +314,8 @@ describe('llevel', function () {
             var loglevel = new Loglevel('debug');
             loglevel.important(['fatal', 'info', 'trace'], 'warn', function (err, logthis, toplevel) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
-                expect(toplevel).to.eql('fatal');
+                expect(logthis).to.equal(true);
+                expect(toplevel).to.equal('fatal');
                 done();
             });
         });
@@ -323,8 +324,8 @@ describe('llevel', function () {
             var loglevel = new Loglevel('debug');
             loglevel.important(['fatal', 'info', 'trace'], 'ysnp', function (err, logthis, toplevel) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
-                expect(toplevel).to.eql('fatal');
+                expect(logthis).to.equal(true);
+                expect(toplevel).to.equal('fatal');
                 done();
             });
         });
@@ -333,8 +334,8 @@ describe('llevel', function () {
             var loglevel = new Loglevel('warn');
             loglevel.important(['info', 'trace'], function (err, logthis, toplevel) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
-                expect(toplevel).to.eql('info');
+                expect(logthis).to.equal(false);
+                expect(toplevel).to.equal('info');
                 done();
             });
         });
@@ -350,8 +351,8 @@ describe('llevel', function () {
             var loglevel = new Loglevel('b', levels);
             loglevel.important(['fatal', 'info', 'b'], function (err, logthis, toplevel) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
-                expect(toplevel).to.eql('b');
+                expect(logthis).to.equal(true);
+                expect(toplevel).to.equal('b');
                 done();
             });
         });
@@ -367,7 +368,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('no', levels);
             loglevel.important('c', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -383,7 +384,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('a', levels);
             loglevel.important('c', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(true);
+                expect(logthis).to.equal(true);
                 done();
             });
         });
@@ -394,7 +395,7 @@ describe('llevel', function () {
 
             loglevel.important('info', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -403,7 +404,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('warn');
             loglevel.important({}, function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -414,7 +415,7 @@ describe('llevel', function () {
 
                 ], function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -426,7 +427,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('warn');
             loglevel.important(['fatal', 'off'], function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -438,31 +439,31 @@ describe('llevel', function () {
             expect(loglevel.getMinimumLevel({
                     'info' : 0,
                     'trace' : 1
-                })).to.eql('info');
+                })).to.equal('info');
             done();
         });
 
         it('returns "trace" if argument is not an object', function (done) {
             var loglevel = new Loglevel('warn');
-            expect(loglevel.getMinimumLevel([])).to.eql('trace');
+            expect(loglevel.getMinimumLevel([])).to.equal('trace');
             done();
         });
 
         it('returns "trace" if argument is null', function (done) {
             var loglevel = new Loglevel('warn');
-            expect(loglevel.getMinimumLevel(null)).to.eql('trace');
+            expect(loglevel.getMinimumLevel(null)).to.equal('trace');
             done();
         });
 
         it('returns "trace" if argument is empty object', function (done) {
             var loglevel = new Loglevel('warn');
-            expect(loglevel.getMinimumLevel({})).to.eql('trace');
+            expect(loglevel.getMinimumLevel({})).to.equal('trace');
             done();
         });
 
         it('returns "trace" if argument is a function', function (done) {
             var loglevel = new Loglevel('warn');
-            expect(loglevel.getMinimumLevel(function () {})).to.eql('trace');
+            expect(loglevel.getMinimumLevel(function () {})).to.equal('trace');
             done();
         });
 
@@ -472,7 +473,7 @@ describe('llevel', function () {
                     'info' : 0,
                     'trace' : 1,
                     'not-finite' : 'bla'
-                })).to.eql('info');
+                })).to.equal('info');
             done();
         });
     });
@@ -485,7 +486,7 @@ describe('llevel', function () {
                 'trace' : 1,
             };
             loglevel.setLevels(levels);
-            expect(loglevel.levels).to.eql(levels);
+            expect(loglevel.levels).to.deep.equal(levels);
             done();
         });
 
@@ -497,7 +498,7 @@ describe('llevel', function () {
                 'not-finite' : 'bla'
             };
             loglevel.setLevels(levels);
-            expect(loglevel.levels).to.eql({
+            expect(loglevel.levels).to.deep.equal({
                 'info' : 0,
                 'trace' : 1
             });
@@ -508,7 +509,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('warn');
             var oLevels = loglevel.levels;
             loglevel.setLevels(null);
-            expect(loglevel.levels).to.eql(oLevels);
+            expect(loglevel.levels).to.deep.equal(oLevels);
             done();
         });
 
@@ -516,7 +517,7 @@ describe('llevel', function () {
             var loglevel = new Loglevel('warn');
             var oLevels = loglevel.levels;
             loglevel.setLevels(function () {});
-            expect(loglevel.levels).to.eql(oLevels);
+            expect(loglevel.levels).to.deep.equal(oLevels);
             done();
         });
 
@@ -525,7 +526,7 @@ describe('llevel', function () {
             loglevel.setLevels({});
             loglevel.important('fatal', function (err, logthis) {
                 expect(err).to.not.exist;
-                expect(logthis).to.eql(false);
+                expect(logthis).to.equal(false);
                 done();
             });
         });
@@ -539,7 +540,7 @@ describe('llevel', function () {
                 tracE : 2,
                 information : 3
             });
-            expect(loglevel.levels).to.eql({
+            expect(loglevel.levels).to.deep.equal({
                 none : -2,
                 trace : 2,
                 information : 3
@@ -554,7 +555,7 @@ describe('llevel', function () {
                 'trace' : 1,
                 'null' : null
             });
-            expect(loglevel.levels).to.eql({
+            expect(loglevel.levels).to.deep.equal({
                 info : 0,
                 trace : 1
             });
@@ -572,12 +573,12 @@ describe('llevel', function () {
                 'none' : -1
             };
             loglevel.setLevels(levels);
-            expect(loglevel.levels).to.eql({
+            expect(loglevel.levels).to.equal({
                 'info' : 0,
                 'trace' : 1,
                 'none' : -1
             });
-            expect(loglevel.level).to.eql('info');
+            expect(loglevel.level).to.equal('info');
             done();
         });
 
