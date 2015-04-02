@@ -3,9 +3,8 @@ node_js:
 - "0.10"
 - "0.11"
 - "0.12"
-addons:
-  code_climate:
-    repo_token:
-      secure: gnpmh05SCdybzUpPPUmw+qEAaeldD/mhdV/1QuGVwPy/hs8SsiTzhspwJdPKtzoT12M6qXR9P8xh3yyiVegH/qsIONuAc7hSXJYd+PgFEYG4TcT9CxFoFVPKDkD6blYtzj8ty1ME6LFswqEghyTP6+xucqAu+isSkpbay5Jlemc=
+env:
+  global:
+    - secure: YMVFiR3est3PnV6YqTeHB25PGLiCq8a4HYjyXjOIzDL5HRaBpyOYYlaG0pk9YLe9RBAtj7pQlyv8OaNv//tm7hFQ2bjLCnexgpKnuG9YDv3dVmyde9+zryBRlkIcxs4b6aZosmEKrNLOWZnvZqxjKFPBe7PHe2Rngj68rO9uU0Y=
 after_script:
-- cat coverage.lcov | codeclimate
+- cat coverage.lcov | ./node_modules/coveralls/bin/coveralls.js

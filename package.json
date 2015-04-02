@@ -19,6 +19,7 @@
   "peerDependencies": {},
   "devDependencies": {
     "code": "^1.3.0",
+    "coveralls": "^2.11.2",
     "lab": "5.x.x"
   },
   "scripts": {
