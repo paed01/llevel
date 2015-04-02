@@ -20,7 +20,7 @@ describe('llevel', function() {
             var fn = function() {
                 Loglevel();
             };
-            expect(fn).to.throw(Error);
+            expect(fn).to.throw(Error, 'Llevel must be instantiated using new');
             done();
         });
 
