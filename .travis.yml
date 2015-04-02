@@ -6,5 +6,5 @@ node_js:
 env:
   global:
     - secure: YMVFiR3est3PnV6YqTeHB25PGLiCq8a4HYjyXjOIzDL5HRaBpyOYYlaG0pk9YLe9RBAtj7pQlyv8OaNv//tm7hFQ2bjLCnexgpKnuG9YDv3dVmyde9+zryBRlkIcxs4b6aZosmEKrNLOWZnvZqxjKFPBe7PHe2Rngj68rO9uU0Y=
-after_script:
+after_success:
 - cat coverage.lcov | ./node_modules/coveralls/bin/coveralls.js

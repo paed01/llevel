@@ -1,7 +1,7 @@
 llevel
 ===========
 
-[![Build Status](https://travis-ci.org/paed01/llevel.svg?branch=master)](https://travis-ci.org/paed01/llevel) [![Test Coverage](https://codeclimate.com/github/paed01/llevel/badges/coverage.svg)](https://codeclimate.com/github/paed01/llevel) [![NPM version](https://badge.fury.io/js/llevel.png)](http://badge.fury.io/js/llevel)
+[![Build Status](https://travis-ci.org/paed01/llevel.svg?branch=master)](https://travis-ci.org/paed01/llevel) [![Coverage Status](https://coveralls.io/repos/paed01/llevel/badge.svg?branch=master)](https://coveralls.io/r/paed01/llevel?branch=master) [![NPM version](https://badge.fury.io/js/llevel.png)](http://badge.fury.io/js/llevel)
 
 Log level handling, and thats it.
 

@@ -1,7 +1,7 @@
 {
   "name": "llevel",
   "description": "Log level handling",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "author": "Pål Edman <pal.edman@outlook.com>",
   "contributors": [],
   "repository": "git://github.com/paed01/llevel",
