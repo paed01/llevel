@@ -5,11 +5,6 @@ llevel
 
 Log level handling, and thats it.
 
-Install **llevel**:
-```
-npm install llevel
-```
-
 # Introduction
 
 The *llevel* module handles the importance of log levels. It can be used to decide if a record should be logged or not.
@@ -115,7 +110,7 @@ llevel.important('deadly', function (err, important, level) {
 ### `new Llevel([minLevel], [customLevels])`
 
 - `minLevel` - optional argument to be used as minimum level, defaults to `trace`
-- `customLevels` - optional argument to be used as levels, must be an object where: 
+- `customLevels` - optional argument to be used as levels, must be an object where:
   - `key` - level name. The key is made lowercase
   - `value` - `number`, level importance, is tested with `isFinite`. Negative numbers are considered `off`
 
@@ -123,7 +118,7 @@ llevel.important('deadly', function (err, important, level) {
 var llevel = new Llevel();
 // llevel.level -> trace
 ```
-  
+
 When setting `minLevel` the argument is compared with levels. If the minimum level is not found the lowest positive level is used.
 
 ```javascript
@@ -166,7 +161,7 @@ var llevel = new Llevel({
 ```
 
 Object values in `customLevels` that are not numbers are ignored.
- 
+
 ```javascript
 var llevel = new Llevel({
     none : -2,
@@ -178,7 +173,7 @@ var llevel = new Llevel({
 ```
 
 If both `minLevel` and `customLevels` are used the `minLevel` should match one of the custom levels. If not, the lowest positive level is used as `minLevel`.
- 
+
 ```javascript
 var llevel = new Llevel('none', {
     none : -2,
@@ -206,4 +201,13 @@ Is the level important enough?
 - `callback` - Callback function using the signature `function(err, important, level)` where:
   - `err` - decision failed, the error reason, otherwise `null`
   - `important` - `boolean`, `true` if `level` is equally or more important than minimum level, otherwise `false`. If `level` is an array the most important level is compared to minimum level
-  - `level` - the most important level from argument `level`. Especially interresting if `level` is an array 
+  - `level` - the most important level from argument `level`. Especially interresting if `level` is an array
+
+### `importantSync(level[, minLevel])`
+
+Synchronous check if the level is important enough?
+
+- `level` - The level or levels to test for importance. Must be a string or an array of strings
+- `minLevel` - Optional minimum level, defaults to `minLevel` argument in constructor
+
+Returns `boolean`, `true` if `level` is equally or more important than minimum level, otherwise `false`. If `level` is an array the most important level is compared to minimum level
