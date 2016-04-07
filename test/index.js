@@ -317,7 +317,7 @@ lab.experiment('llevel', () => {
       });
     });
 
-    lab.test('returns highest level in callback as toplevel in lowercase', (done) => {
+    lab.test('returns highest level in callback as toplevel - in lowercase', (done) => {
       let loglevel = new Loglevel('debug');
       loglevel.important('Fatal', (err, logthis, toplevel) => {
         expect(err).to.not.exist();
