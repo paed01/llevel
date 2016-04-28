@@ -1,7 +1,8 @@
 language: node_js
 node_js:
-- "4"
+- "6"
 - "5"
+- "4"
 env:
   global:
     - secure: YMVFiR3est3PnV6YqTeHB25PGLiCq8a4HYjyXjOIzDL5HRaBpyOYYlaG0pk9YLe9RBAtj7pQlyv8OaNv//tm7hFQ2bjLCnexgpKnuG9YDv3dVmyde9+zryBRlkIcxs4b6aZosmEKrNLOWZnvZqxjKFPBe7PHe2Rngj68rO9uU0Y=
