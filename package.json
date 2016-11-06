@@ -1,7 +1,7 @@
 {
   "name": "llevel",
   "description": "Log level handling",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Pål Edman <pal.edman@outlook.com>",
   "contributors": [],
   "repository": "git://github.com/paed01/llevel",
@@ -18,9 +18,9 @@
   "dependencies": {},
   "peerDependencies": {},
   "devDependencies": {
-    "code": "^3.0.0",
-    "coveralls": "^2.11.9",
-    "lab": "^10.7.1"
+    "code": "^4.0.0",
+    "coveralls": "^2.11.14",
+    "lab": "^11.1.0"
   },
   "scripts": {
     "test": "make test-cov-lcov",
