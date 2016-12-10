@@ -5,7 +5,7 @@ const Lab = require('lab');
 const lab = exports.lab = Lab.script();
 const expect = Code.expect;
 
-const Loglevel = require('../index');
+const Loglevel = require('../');
 
 lab.experiment('llevel', () => {
 
