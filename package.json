@@ -1,7 +1,7 @@
 {
   "name": "llevel",
   "description": "Log level handling",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Pål Edman <pal.edman@outlook.com>",
   "contributors": [],
   "repository": "git://github.com/paed01/llevel",
@@ -23,10 +23,10 @@
     "babel-preset-es2015-rollup": "^3.0.0",
     "code": "^4.0.0",
     "coveralls": "^2.11.15",
-    "lab": "^11.2.1",
-    "rollup": "^0.38.0",
+    "lab": "^12.1.0",
+    "rollup": "^0.41.4",
     "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-commonjs": "^6.0.1"
+    "rollup-plugin-commonjs": "^7.0.0"
   },
   "scripts": {
     "prepublish": "rollup -c",
