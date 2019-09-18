@@ -1,60 +1,49 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
-const lab = exports.lab = Lab.script();
-const expect = Code.expect;
+const {describe, it} = exports.lab = require('@hapi/lab').script();
+const {expect} = require('@hapi/code');
 
 const Loglevel = require('../');
 
-lab.experiment('llevel', () => {
-
-  lab.experiment('#ctor', () => {
-
-    lab.test('throws if not instantiated with new', (done) => {
+describe('llevel', () => {
+  describe('#ctor', () => {
+    it('throws if not instantiated with new', () => {
       function fn() {
-        /*eslint new-cap:0 */
         Loglevel();
       }
       expect(fn).to.throw(Error, 'Llevel must be instantiated using new');
-      done();
     });
 
-    lab.test('takes level as argument', (done) => {
+    it('takes level as argument', () => {
       const ll = new Loglevel('trace');
       expect(ll.level).to.equal('trace');
-      done();
     });
 
-    lab.test('without argument returns lowest level', (done) => {
+    it('without argument returns lowest level', () => {
       const ll = new Loglevel();
       expect(ll.level).to.equal('trace');
-      done();
     });
 
-    lab.test('with level not in levels returns lowest level', (done) => {
+    it('with level not in levels returns lowest level', () => {
       const ll = new Loglevel('ysnp');
       expect(ll.level).to.equal('trace');
-      done();
     });
 
-    lab.test('support custom levels', (done) => {
+    it('support custom levels', () => {
       const levels = {
         ysnp: 0
       };
       const ll = new Loglevel('ysnp', levels);
       expect(ll.level).to.equal('ysnp');
-      done();
     });
 
-    lab.test('ignores custom levels that is not an object', (done) => {
+    it('ignores custom levels that is not an object', () => {
       const levels = [];
       const ll = new Loglevel('ysnp', levels);
       expect(ll.level).to.equal('trace');
-      done();
     });
 
-    lab.test('ignores custom level that is not finite', (done) => {
+    it('ignores custom level that is not finite', () => {
       const levels = {
         none: -1,
         warning: 0,
@@ -65,10 +54,9 @@ lab.experiment('llevel', () => {
         none: -1,
         warning: 0
       });
-      done();
     });
 
-    lab.test('with custom levels resolves the lowest level >0 as default', (done) => {
+    it('with custom levels resolves the lowest level >0 as default', () => {
       const levels = {
         none: -1,
         warning: 0,
@@ -76,278 +64,252 @@ lab.experiment('llevel', () => {
       };
       const ll = new Loglevel(null, levels);
       expect(ll.level).to.equal('warning');
-      done();
     });
 
-    lab.test('takes custom levels as first argument', (done) => {
+    it('takes custom levels as first argument', () => {
       const levels = {
         none: -1,
         warning: 0
       };
       const ll = new Loglevel(levels);
       expect(ll.level).to.equal('warning');
-      done();
     });
 
-    lab.test('ignores null as custom levels', (done) => {
+    it('ignores null as custom levels', () => {
       const ll = new Loglevel(null, null);
       expect(ll.level).to.equal('trace');
-      done();
     });
 
-    lab.test('ignores function as custom levels', (done) => {
+    it('ignores function as custom levels', () => {
       const ll = new Loglevel(null, () => {});
       expect(ll.level).to.equal('trace');
-      done();
     });
   });
 
-  lab.experiment('#resolve', () => {
+  describe('#resolve', () => {
     const loglevel = new Loglevel('trace');
 
-    lab.test('resolves level to corresponding int', (done) => {
+    it('resolves level to corresponding int', () => {
       expect(loglevel.resolve('trace')).to.equal(0);
-      done();
     });
 
-    lab.test('resolves level to corresponding int case-insensitive', (done) => {
+    it('resolves level to corresponding int case-insensitive', () => {
       expect(loglevel.resolve('WARN')).to.equal(4);
-      done();
     });
 
-    lab.test('returns -1 if not a string', (done) => {
+    it('returns -1 if not a string', () => {
       expect(loglevel.resolve(0)).to.equal(-1);
-      done();
     });
 
-    lab.test('returns -1 if null', (done) => {
+    it('returns -1 if null', () => {
       expect(loglevel.resolve(null)).to.equal(-1);
-      done();
     });
 
-    lab.test('returns -1 if not found', (done) => {
+    it('returns -1 if not found', () => {
       expect(loglevel.resolve('ysnp')).to.equal(-1);
-      done();
+    });
+
+    it('returns custom level', () => {
+      const ll = new Loglevel('info', {MIN: 1000});
+      expect(ll.resolve('MIN')).to.equal(1000);
+    });
+
+    it('returns -1 if custom level is not found', () => {
+      const ll = new Loglevel('info', {WARN: 1});
+      expect(ll.resolve('MIN')).to.equal(-1);
     });
   });
 
-  lab.experiment('#levelFromArray', () => {
+  describe('#levelFromArray', () => {
     const loglevel = new Loglevel('trace');
 
-    lab.test('returns top level from array of levels', (done) => {
+    it('returns top level from array of levels', () => {
       expect(loglevel.levelFromArray(['trace'])).to.equal('trace');
-      done();
     });
 
-    lab.test('returns null if empty array', (done) => {
+    it('returns null if empty array', () => {
       expect(loglevel.levelFromArray([])).to.equal(null);
-      done();
     });
 
-    lab.test('returns highest level', (done) => {
+    it('returns highest level', () => {
       expect(loglevel.levelFromArray(['fatal', 'trace', 'off'])).to.equal('fatal');
-      done();
     });
 
-    lab.test('returns null if argument is null', (done) => {
+    it('returns null if argument is null', () => {
       expect(loglevel.levelFromArray(null)).to.equal(null);
-      done();
     });
 
-    lab.test('returns null if argument is not an array', (done) => {
+    it('returns null if argument is not an array', () => {
       expect(loglevel.levelFromArray({
         level: 'off'
       })).to.equal(null);
-      done();
     });
 
-    lab.test('returns null if argument is an array with null', (done) => {
+    it('returns null if argument is an array with null', () => {
       expect(loglevel.levelFromArray([null])).to.equal(null);
-      done();
     });
 
-    lab.test('returns level if argument is an array that contains null', (done) => {
+    it('returns level if argument is an array that contains null', () => {
       expect(loglevel.levelFromArray(['trace', null])).to.equal('trace');
-      done();
     });
   });
 
-  lab.experiment('#compare', () => {
+  describe('#compare', () => {
     const loglevel = new Loglevel('trace');
 
-    lab.test('returns level int if greater than minimum level', (done) => {
+    it('returns level int if greater than minimum level', () => {
       expect(loglevel.compare('trace', -1)).to.equal(0);
-      done();
     });
 
-    lab.test('returns -1 if level not found', (done) => {
+    it('returns -1 if level not found', () => {
       expect(loglevel.compare('ysnp', 16)).to.equal(-1);
-      done();
     });
 
-    lab.test('returns -1 if level is less than minimum level', (done) => {
+    it('returns -1 if level is less than minimum level', () => {
       expect(loglevel.compare('debug', 8)).to.equal(-1);
-      done();
     });
 
-    lab.test('returns -1 if level is null', (done) => {
+    it('returns -1 if level is null', () => {
       expect(loglevel.compare(null, 0)).to.equal(-1);
-      done();
     });
   });
 
-  lab.experiment('#important', () => {
+  describe('#important', () => {
 
-    lab.test('returns in true callback if level is greater than minimum level', (done) => {
+    it('returns in true callback if level is greater than minimum level', () => {
       const loglevel = new Loglevel('error');
       loglevel.important('warn', 'trace', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
-        done();
       });
     });
 
-    lab.test('returns in false callback if level is less than minimum level', (done) => {
+    it('returns in false callback if level is less than minimum level', () => {
       const loglevel = new Loglevel('error');
       loglevel.important('trace', 'warn', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('takes only level as argument', (done) => {
+    it('takes only level as argument', () => {
       const loglevel = new Loglevel('error');
       const fn = () => {
         loglevel.important('trace');
       };
       expect(fn).to.not.throw();
-      done();
     });
 
-    lab.test('does not throw if only callback as argument, dont see the point though', (done) => {
+    it('does not throw if only callback as argument, dont see the point though', () => {
       const loglevel = new Loglevel('error');
       const fn = () => {
         loglevel.important(() => {});
       };
       expect(fn).to.not.throw();
-      done();
     });
 
-    lab.test('takes minimum level from constructor if not passed as argument', (done) => {
+    it('takes minimum level from constructor if not passed as argument', () => {
       const loglevel = new Loglevel('error');
       loglevel.important('trace', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('returns false in callback if no level', (done) => {
+    it('returns false in callback if no level', () => {
       const loglevel = new Loglevel('error');
       loglevel.important(null, (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('returns true in callback if no minumum level in ctor', (done) => {
+    it('returns true in callback if no minumum level in ctor', () => {
       const loglevel = new Loglevel();
       loglevel.important('trace', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
-        done();
       });
     });
 
-    lab.test('returns false in callback if argument is off', (done) => {
+    it('returns false in callback if argument is off', () => {
       const loglevel = new Loglevel('trace');
       loglevel.important('off', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('returns false in callback if minimum level is off', (done) => {
+    it('returns false in callback if minimum level is off', () => {
       const loglevel = new Loglevel('off');
       loglevel.important('fatal', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('takes array as level argument', (done) => {
+    it('takes array as level argument', () => {
       const loglevel = new Loglevel('debug');
       loglevel.important(['fatal'], (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
-        done();
       });
     });
 
-    lab.test('resolves to highest level if passed array as level argument', (done) => {
+    it('resolves to highest level if passed array as level argument', () => {
       const loglevel = new Loglevel('debug');
       loglevel.important(['fatal', 'info', 'trace'], (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
-        done();
       });
     });
 
-    lab.test('if passed array returns highest level in callback as level argument', (done) => {
+    it('if passed array returns highest level in callback as level argument', () => {
       const loglevel = new Loglevel('debug');
       loglevel.important(['fatal', 'info', 'trace'], (err, logthis, toplevel) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
         expect(toplevel).to.equal('fatal');
-        done();
       });
     });
 
-    lab.test('returns highest level in callback as toplevel', (done) => {
+    it('returns highest level in callback as toplevel', () => {
       const loglevel = new Loglevel('debug');
       loglevel.important(['Fatal', 'info', 'trace'], 'warn', (err, logthis, toplevel) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
         expect(toplevel).to.equal('fatal');
-        done();
       });
     });
 
-    lab.test('returns highest level in callback as toplevel - in lowercase', (done) => {
+    it('returns highest level in callback as toplevel - in lowercase', () => {
       const loglevel = new Loglevel('debug');
       loglevel.important('Fatal', (err, logthis, toplevel) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
         expect(toplevel).to.equal('fatal');
-        done();
       });
     });
 
-    lab.test('ignores custom minimum level if not found', (done) => {
+    it('ignores custom minimum level if not found', () => {
       const loglevel = new Loglevel('debug');
       loglevel.important(['fatal', 'info', 'trace'], 'ysnp', (err, logthis, toplevel) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
         expect(toplevel).to.equal('fatal');
-        done();
       });
     });
 
-    lab.test('returns highest level in callback even if not enough', (done) => {
+    it('returns highest level in callback even if not enough', () => {
       const loglevel = new Loglevel('warn');
       loglevel.important(['info', 'trace'], (err, logthis, toplevel) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
         expect(toplevel).to.equal('info');
-        done();
       });
     });
 
-    lab.test('with custom levels returns highest level in callback as toplevel', (done) => {
+    it('with custom levels returns highest level in callback as toplevel', () => {
       const levels = {
         no: -2,
         none: -1,
@@ -360,11 +322,10 @@ lab.experiment('llevel', () => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
         expect(toplevel).to.equal('b');
-        done();
       });
     });
 
-    lab.test('with custom levels returns in false callback if default level is less than 0', (done) => {
+    it('with custom levels returns in false callback if default level is less than 0', () => {
       const levels = {
         no: -2,
         none: -1,
@@ -376,11 +337,10 @@ lab.experiment('llevel', () => {
       loglevel.important('c', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('with custom levels returns in true in callback even if casing is wrong', (done) => {
+    it('with custom levels returns in true in callback even if casing is wrong', () => {
       const levels = {
         no: -2,
         none: -1,
@@ -392,134 +352,118 @@ lab.experiment('llevel', () => {
       loglevel.important('c', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(true);
-        done();
       });
     });
 
-    lab.test('with deleted levels property reverts to default levels', (done) => {
+    it('with deleted levels property reverts to default levels', () => {
       const loglevel = new Loglevel('warn');
       delete loglevel.levels;
 
       loglevel.important('info', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('level argument is object returns false', (done) => {
+    it('level argument is object returns false', () => {
       const loglevel = new Loglevel('warn');
       loglevel.important({}, (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('level argument is array of objects returns false', (done) => {
+    it('level argument is array of objects returns false', () => {
       const loglevel = new Loglevel('warn');
       loglevel.important([{}, {}
 
       ], (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
     // Not sure about the expected behavior...
-    lab.test('level argument is array that contains off returns false', {
+    it('level argument is array that contains off returns false', {
       skip: true
-    }, (done) => {
+    }, () => {
       const loglevel = new Loglevel('warn');
       loglevel.important(['fatal', 'off'], (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
   });
 
-  lab.experiment('#importantSync', () => {
-    lab.test('returns in true if level is greater than minimum level', (done) => {
+  describe('#importantSync', () => {
+    it('returns in true if level is greater than minimum level', () => {
       const loglevel = new Loglevel('error');
       expect(loglevel.importantSync('warn', 'trace')).to.equal(true);
-      done();
     });
 
-    lab.test('custom minumum level affects result', (done) => {
+    it('custom minumum level affects result', () => {
       const loglevel = new Loglevel('info');
       expect(loglevel.importantSync(['info'], 'warn')).to.equal(false);
       expect(loglevel.importantSync(['trace'], 'trace')).to.equal(true);
-      done();
     });
 
-    lab.test('ignores custom minimum level if not found', (done) => {
+    it('ignores custom minimum level if not found', () => {
       const loglevel = new Loglevel('debug');
       expect(loglevel.importantSync(['fatal', 'info', 'trace'], 'ysnp')).to.equal(true);
-      done();
     });
 
-    lab.test('returns false if minLevel is not a string', (done) => {
+    it('returns false if minLevel is not a string', () => {
       const loglevel = new Loglevel('debug');
       expect(loglevel.importantSync(['fatal', 'info', 'trace'], 0)).to.equal(false);
-      done();
     });
 
-    lab.test('returns level is an empty array', (done) => {
+    it('returns level is an empty array', () => {
       const loglevel = new Loglevel('debug');
       expect(loglevel.importantSync([], 'trace')).to.equal(false);
-      done();
     });
   });
 
-  lab.experiment('#getMinimumLevel', () => {
-    lab.test('returns lowest level', (done) => {
+  describe('#getMinimumLevel', () => {
+    it('returns lowest level', () => {
       const loglevel = new Loglevel('warn');
       expect(loglevel.getMinimumLevel({
         'info': 0,
         'trace': 1
       })).to.equal('info');
-      done();
     });
 
-    lab.test('returns "trace" if argument is not an object', (done) => {
+    it('returns "trace" if argument is not an object', () => {
       const loglevel = new Loglevel('warn');
       expect(loglevel.getMinimumLevel([])).to.equal('trace');
-      done();
     });
 
-    lab.test('returns "trace" if argument is null', (done) => {
+    it('returns "trace" if argument is null', () => {
       const loglevel = new Loglevel('warn');
       expect(loglevel.getMinimumLevel(null)).to.equal('trace');
-      done();
     });
 
-    lab.test('returns "trace" if argument is empty object', (done) => {
+    it('returns "trace" if argument is empty object', () => {
       const loglevel = new Loglevel('warn');
       expect(loglevel.getMinimumLevel({})).to.equal('trace');
-      done();
     });
 
-    lab.test('returns "trace" if argument is a function', (done) => {
+    it('returns "trace" if argument is a function', () => {
       const loglevel = new Loglevel('warn');
       expect(loglevel.getMinimumLevel(() => {})).to.equal('trace');
-      done();
     });
 
-    lab.test('ignores level that is not finite', (done) => {
+    it('ignores level that is not finite', () => {
       const loglevel = new Loglevel('warn');
       expect(loglevel.getMinimumLevel({
         'info': 0,
         'trace': 1,
         'not-finite': 'bla'
       })).to.equal('info');
-      done();
     });
   });
 
-  lab.experiment('#setLevels', () => {
-    lab.test('saves levels in property levels', (done) => {
+  describe('#setLevels', () => {
+    it('saves levels in property levels', () => {
       const loglevel = new Loglevel('warn');
       const levels = {
         'info': 0,
@@ -527,10 +471,9 @@ lab.experiment('llevel', () => {
       };
       loglevel.setLevels(levels);
       expect(loglevel.levels).to.only.equal(levels);
-      done();
     });
 
-    lab.test('ignores levels that are not finite', (done) => {
+    it('ignores levels that are not finite', () => {
       const loglevel = new Loglevel('warn');
       const levels = {
         'info': 0,
@@ -542,36 +485,32 @@ lab.experiment('llevel', () => {
         'info': 0,
         'trace': 1
       });
-      done();
     });
 
-    lab.test('ignores levels argument if null', (done) => {
+    it('ignores levels argument if null', () => {
       const loglevel = new Loglevel('warn');
       const oLevels = loglevel.levels;
       loglevel.setLevels(null);
       expect(loglevel.levels).to.only.equal(oLevels);
-      done();
     });
 
-    lab.test('ignores levels argument if function', (done) => {
+    it('ignores levels argument if function', () => {
       const loglevel = new Loglevel('warn');
       const oLevels = loglevel.levels;
       loglevel.setLevels(() => {});
       expect(loglevel.levels).to.only.equal(oLevels);
-      done();
     });
 
-    lab.test('with empty object returns false when testing importance', (done) => {
+    it('with empty object returns false when testing importance', () => {
       const loglevel = new Loglevel('warn');
       loglevel.setLevels({});
       loglevel.important('fatal', (err, logthis) => {
         expect(err).to.not.exist();
         expect(logthis).to.equal(false);
-        done();
       });
     });
 
-    lab.test('ignores case of level keys', (done) => {
+    it('ignores case of level keys', () => {
       const loglevel = new Loglevel('warn');
       loglevel.setLevels({
         none: -2,
@@ -585,10 +524,9 @@ lab.experiment('llevel', () => {
         trace: 2,
         information: 3
       });
-      done();
     });
 
-    lab.test('ignores level that is null', (done) => {
+    it('ignores level that is null', () => {
       const loglevel = new Loglevel('warn');
       loglevel.setLevels({
         'info': 0,
@@ -599,13 +537,12 @@ lab.experiment('llevel', () => {
         info: 0,
         trace: 1
       });
-      done();
     });
 
     // Not sure about the expected behavior...
-    lab.test('sets new minLevel if level not found', {
+    it('sets new minLevel if level not found', {
       skip: true
-    }, (done) => {
+    }, () => {
       const loglevel = new Loglevel('warn');
       const levels = {
         'info': 0,
@@ -619,7 +556,6 @@ lab.experiment('llevel', () => {
         'none': -1
       });
       expect(loglevel.level).to.equal('info');
-      done();
     });
 
   });

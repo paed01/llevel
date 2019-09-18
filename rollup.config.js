@@ -1,21 +1,28 @@
 'use strict';
 
-const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
+const commonjs = require('rollup-plugin-commonjs');
 
 module.exports = {
-  entry: './index.js',
-  moduleName: 'chronokinesis',
+  input: './index.js',
   plugins: [
     commonjs({
       sourceMap: false
     }),
-    babel({
-      presets: ['es2015-rollup'],
-      exclude: 'node_modules/**'
-    })
+    babel()
   ],
-  targets: [
-    { dest: 'src/index.es.js', format: 'es' }
+  output: [
+    {
+      name: 'llevel',
+      file: 'dist/llevel.js',
+      exports: 'named',
+      format: 'iife',
+    },
+    {
+      name: 'llevel',
+      file: 'dist/index.es.js',
+      exports: 'named',
+      format: 'es',
+    }
   ]
 };

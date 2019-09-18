@@ -67,7 +67,7 @@ internals.Loglevel.prototype.resolve = function(level, returnMinimumLevelIfNotFo
   if (typeof level !== 'string') {
     return -1;
   }
-  if (!this.levels || typeof this.levels !== 'object') {
+  if (!this.levels) {
     this.setLevels(defaultLevels);
   }
   let levelInt = -1;
