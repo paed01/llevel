@@ -18,9 +18,6 @@
     "loglevel",
     "tags"
   ],
-  "engines": {
-    "node": ">=4"
-  },
   "dependencies": {},
   "peerDependencies": {},
   "devDependencies": {
